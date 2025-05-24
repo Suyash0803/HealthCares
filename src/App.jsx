@@ -5,7 +5,7 @@ import './App.css'
 
 // Lazy loaded component
 import Home from './pages/Home'
-
+import Register from './pages/Register'
 function App() {
   return (
     <Router>
@@ -13,7 +13,17 @@ function App() {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route
+            path="/register"
+            element={
+            
+                <Register />
+        
+            }
+          
+          />
         </Routes>
+        
       </Suspense>
     </Router>
   )
