@@ -6,6 +6,8 @@ import './App.css'
 // Lazy loaded component
 import Home from './pages/Home'
 import Register from './pages/Register'
+import Login from './pages/Login'
+import Doctors from './components/Doctors-apply'
 function App() {
   return (
     <Router>
@@ -22,6 +24,22 @@ function App() {
             }
           
           />
+          <Route
+            path="/login"
+            element={
+            
+                <Login />
+        
+            }
+          
+          />
+          <Route
+            path="/doctors"
+            element={
+              <Doctors />
+            }
+          />
+
         </Routes>
         
       </Suspense>
