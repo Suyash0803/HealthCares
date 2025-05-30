@@ -25,6 +25,7 @@ body {
   background-color: var(--light-blue);
 }
 
+
 li {
   list-style: none;
 }
@@ -45,7 +46,8 @@ h6 {
 .page-heading {
   font-size: 2rem;
   text-align: center;
-  margin: 0 auto;
+  margin: 2rem auto;  
+  padding-bottom: 3rem;
 }
 
 p {

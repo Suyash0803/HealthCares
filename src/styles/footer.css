@@ -1,22 +1,22 @@
 
-
+@import url(../App.css);
 footer {
   background-color: var(--light-text-color);
 }
 
 .footer {
   display: flex;
-  width: 50%;
+  inline-size: 50%;
   align-items: flex-start;
   justify-content: space-between;
-  height: 100%;
+  block-size: 100%;
   margin: auto;
   padding: 2rem 0;
 }
 
 .footer h3 {
   color: var(--light-blue);
-  margin-bottom: 1rem;
+  margin-block-end: 1rem;
   font-size: 1.2rem;
 }
 
@@ -37,8 +37,8 @@ footer {
 
 .social li {
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  inline-size: 40px;
+  block-size: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -89,4 +89,15 @@ footer {
     flex-direction: column;
     align-items: center;
   }
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
 }

@@ -1,9 +1,11 @@
 import React,{useState} from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import "../styles/login.css"
-
+import axios from 'axios';
 import toast from "react-hot-toast"
 import LoginImage from '../images/login.jpg';
+
+axios.defaults.baseURL = "http://localhost:5000/api/v1";
 
 function Login(){
     const [file,setFile]=useState("");

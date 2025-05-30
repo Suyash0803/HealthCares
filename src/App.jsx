@@ -8,6 +8,11 @@ import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Doctors from './components/Doctors-apply'
+import DoctorCard from './components/DoctorCard'
+import ViewDoctor from './pages/Doctors'
+import Error from './pages/Error'
+import DoctorProfile from './pages/Doctors-info'
+import BookingAppointment from './components/BookAppointment'
 function App() {
   return (
     <Router>
@@ -39,6 +44,15 @@ function App() {
               <Doctors />
             }
           />
+          <Route
+            path="/doctors-appointment"
+            element={
+              <ViewDoctor/>
+            }
+          />
+          <Route path="/doctors/:doctorId" element={<DoctorProfile />} />
+          <Route path='/doctors/book-appointment' element={<BookingAppointment />} />
+          <Route path="*" element={<Error />} />
 
         </Routes>
         

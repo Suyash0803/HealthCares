@@ -3,20 +3,26 @@ import toast from "react-hot-toast";
 import "../styles/doctors-apply.css";
 import axios from "axios";
 import DoctorImage from "../images/ij.jpg"
+import { useNavigate } from "react-router-dom";
+axios.defaults.baseURL = "http://localhost:5000/api/doctors";
 
 function DoctorApply() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    specialization: "",
-    experience: "",
-    phone: "",
-    qualification: "",
-    address: "",
-    fees: "",
-    gender: "",
-    hospitalName: "",
-  });
+  name: "",
+  email: "",
+  password: "",
+  specialization: "",
+  experience: "",
+  phone: "",
+  qualification: "",
+  address: "",
+  fees: "",
+  gender: "",
+  hospitalName: "",
+  walletAddress: ""
+});
+
   const inputChange = (e) => {
     const { name, value } = e.target;
     return setFormData({
@@ -37,6 +43,8 @@ function DoctorApply() {
       fees,
       gender,
       hospitalName,
+      walletAddress,
+      password,
     } = formData;
     if (
       !name ||
@@ -48,14 +56,16 @@ function DoctorApply() {
       !address ||
       !fees ||
       !gender ||
-      !hospitalName
+      !hospitalName||
+      !walletAddress ||
+      !password
     ) {
       return toast.error("Please fill all the fields");
     }
     const toastId = toast.loading("Submitting your application...");
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/doctors/apply",
+        "/register",
         formData
       );
       if (response.data.success) {
@@ -71,14 +81,18 @@ function DoctorApply() {
           fees: "",
           gender: "",
           hospitalName: "",
+          walletAddress: "",
+          password: "",
         });
+         navigate("/");
       }
     } catch (error) {
-      console.error("Error submitting application:", error);
-      toast.error("Failed to submit application. Please try again.", {
-        id: toastId,
-      });
-    }
+  console.error("Error submitting application:", error.response?.data || error);
+  toast.error(error.response?.data?.message || "Failed to submit application. Please try again.", {
+    id: toastId,
+  });
+}
+
   };
 
   return (
@@ -108,7 +122,23 @@ function DoctorApply() {
             value={formData.email}
             onChange={inputChange}
           />
-          
+          <input
+  type="password"
+  name="password"
+  className="form-input"
+  placeholder="Enter your password"
+  value={formData.password}
+  onChange={inputChange}
+/>
+<input
+  type="text"
+  name="walletAddress"
+  className="form-input"
+  placeholder="Enter your wallet address"
+  value={formData.walletAddress}
+  onChange={inputChange}
+/>
+
           
           <input
             type="text"
