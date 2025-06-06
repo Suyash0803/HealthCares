@@ -118,67 +118,75 @@ const getPatientReportById = asyncHandler(async (req, res) => {
 );
 
 const registerPatient = asyncHandler(async (req, res) => {
-    // console.log("Registering patient with body:", req.body);
-if (!mongoose.connection.readyState) {
-    throw new ApiError(500, "Database connection is not established");
-}
-const session = await mongoose.startSession();
-// console.log("Registering patient with body:");
-session.startTransaction();
-//    console.log("Registering patient with body:");
-   try {
-        const { name, email, password, walletAddress } = req.body;
-        // console.log("Request body:", email, password, walletAddress);
-        if (!name || !email || !password || !walletAddress) {
-            throw new ApiError(400, "All fields are required");
-        }
-         console.log("Registering patient with email:", email);
+    try {
+        const { name, email, password, walletAddress, age, gender, address, phone, bloodgroup } = req.body;
+        
+        console.log("Registration request received:", { 
+            name, email, walletAddress, 
+            age, gender, address, phone, bloodgroup 
+        });
 
-        const existingPatient = await Patient.findOne({ "email":email });
-        if (existingPatient) {
-            throw new ApiError(400, "Patient already exists with this email");
+        // Basic validation
+        if (!name || !email || !password || !walletAddress) {
+            throw new ApiError(400, "Name, email, password and wallet address are required");
         }
-        console.log("existingPatient:");
-        const existingWallet = await Patient.findOne({ walletAddress });
-        if (existingWallet) {
-            throw new ApiError(400, "Patient already exists with this wallet address");
-        }
-        console.log("walletAddress:", walletAddress);
+
+        // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             throw new ApiError(400, "Invalid email format");
         }
-        console.log("email:", email);
+
+        // Check for existing patient (combined query for better performance)
+        const existingPatient = await Patient.findOne({ 
+            $or: [{ email }, { walletAddress }] 
+        });
         
-        const patient = await Patient.create(
-        [
-         {
+        if (existingPatient) {
+            const conflictField = existingPatient.email === email ? "email" : "wallet address";
+            throw new ApiError(400, `Patient already exists with this ${conflictField}`);
+        }
+
+        // Create new patient (without transaction)
+        const patient = await Patient.create({
             walletAddress,
             name,
             email,
-            password,
-            
-          }
-       ],
-       { session }
-    );
-        console.log("Patient created:",patient);
-        await session.commitTransaction();
-        session.endSession();
-        const createdPatient = await Patient.findById(patient[0]._id).select("-password -refreshToken");
-        console.log("Created patient:", createdPatient._id);
-        if (!createdPatient) {
-            throw new ApiError(500, "Error creating patient");
-        }
-        console.log("Patient registered successfully:", createdPatient);
-        return res.status(201).json(new ApiResponse(201, createdPatient, "Patient registered successfully"));
+            password, // Make sure your Patient model hashes this
+            age,
+            gender,
+            address,
+            phone,
+            bloodgroup
+        });
+
+        // Remove sensitive data before sending response
+        const patientResponse = patient.toObject();
+        delete patientResponse.password;
+        delete patientResponse.refreshToken;
+
+        console.log("Patient registered successfully:", patientResponse._id);
+        
+        return res.status(201).json(
+            new ApiResponse(201, patientResponse, "Patient registered successfully")
+        );
+
     } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
-        return res.status(500).json(new ApiError(500, "Error registering patient: " + error.message));
+        console.error("Registration error:", error);
+        
+        // Handle mongoose validation errors
+        if (error.name === 'ValidationError') {
+            const errors = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json(
+                new ApiError(400, `Validation error: ${errors.join(', ')}`)
+            );
+        }
+        
+        return res.status(error.statusCode || 500).json(
+            new ApiError(error.statusCode || 500, error.message || "Registration failed")
+        );
     }
 });
-
 const loginPatient = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -210,7 +218,7 @@ const loginPatient = asyncHandler(async (req, res) => {
           console.log("Generated accessToken and refreshToken for patient:", accessToken, refreshToken);
         const options = {
             // HttpOnly: Indicates if the cookie is accessible only through the HTTP protocol and not through client-side scripts.
-            httpOnly: true,
+            // httpOnly: true,
             // Secure: Indicates if the cookie should only be transmitted over secure HTTPS connections.
             secure: false, // TODO: Change to true in production
             maxAge: 24 * 60 * 60 * 1000, //cookie will expire after 1 day

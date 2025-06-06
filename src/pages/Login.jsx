@@ -4,11 +4,13 @@ import "../styles/login.css"
 import axios from 'axios';
 import toast from "react-hot-toast"
 import LoginImage from '../images/login.jpg';
+// import { useNavigate } from 'react-router-dom';
 
-axios.defaults.baseURL = "http://localhost:5000/api/v1";
+axios.defaults.baseURL = "http://localhost:5000/api/patients";
 
 function Login(){
     const [file,setFile]=useState("");
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [formDetails, setFormDetails] = useState({
    
@@ -28,7 +30,7 @@ function Login(){
       e.preventDefault();
 
       if (loading) return;
-      if (file === "") return;
+    
 
       const {  email, password } =
         formDetails;
@@ -37,6 +39,27 @@ function Login(){
       } else if (password.length < 5) {
         return toast.error("Password must be at least 5 characters long");
       } 
+      await toast.promise(
+        axios.post("/login",{
+          email,
+          password,
+        },),
+        {
+          loading: "Logging in...",
+          success: (response) => {
+            console.log(response);
+            setLoading(false);
+            localStorage.setItem("token", response.data.data.accessToken);
+            localStorage.setItem("patient", JSON.stringify(response.data.data.patient));
+            return "Login successful";
+          },
+          error: (error) => {
+            setLoading(false);
+            return "Login failed";
+          },
+        }
+      )
+      navigate("/");
    }catch(e){
     console.log(e)
    }
@@ -54,14 +77,14 @@ function Login(){
           className="register-form"
         >
           
-         <input
+         {/* <input
             type="text"
             name="name"
             className="form-input"
             placeholder="Enter your name"
             value={formDetails.name}
             onChange={inputChange}
-          />
+          /> */}
           <input
             type="email"
             name="email"

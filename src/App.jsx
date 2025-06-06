@@ -39,13 +39,13 @@ function App() {
           
           />
           <Route
-            path="/doctors"
+            path="/applyfordoctor"
             element={
               <Doctors />
             }
           />
           <Route
-            path="/doctors-appointment"
+            path="/doctors"
             element={
               <ViewDoctor/>
             }
