@@ -6,7 +6,7 @@ import toast from "react-hot-toast"
 import LoginImage from '../images/login.jpg';
 // import { useNavigate } from 'react-router-dom';
 
-axios.defaults.baseURL = "http://localhost:5000/api/patients";
+// axios.defaults.baseURL = "";
 
 function Login(){
     const [file,setFile]=useState("");
@@ -40,10 +40,10 @@ function Login(){
         return toast.error("Password must be at least 5 characters long");
       } 
       await toast.promise(
-        axios.post("/login",{
+        axios.post("http://localhost:5000/api/patients/login",{
           email,
           password,
-        },),
+        },{withCredentials: true}),
         {
           loading: "Logging in...",
           success: (response) => {

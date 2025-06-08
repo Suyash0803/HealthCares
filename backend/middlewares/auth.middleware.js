@@ -9,6 +9,9 @@ dotenv.config();
 
 const verifyPatientJWT = asyncHandler(async (req, res, next) => {
     console.log("Verifying Patient JWT...");
+    console.log("Cookies:", req.cookie);
+    console.log("Headers:", req.headers);
+    console.log("Authorization Header:", req.header("Authorization"));
     const token =
         req.cookies?.accessToken ||
         req.header("Authorization")?.replace("Bearer ", ""); // Separating token from header

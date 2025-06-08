@@ -25,6 +25,7 @@ const Doctors=()=>{
     return(
         <> 
             <Navbar />
+            
             <div className="doctors-container">
                 <h1 className="page-heading">Doctors</h1>
                 <div className="doctors-list">
@@ -33,6 +34,7 @@ const Doctors=()=>{
                     ))}
                 </div>
             </div>
+            
             <Footer />
         </>
     )

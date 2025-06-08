@@ -6,7 +6,7 @@ import RegisterImage from '../images/d.jpg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-axios.defaults.baseURL = "http://localhost:5000/api/patients";
+// axios.defaults.baseURL = "http://localhost:5000/api/patients";
 function Register() {
   const [file, setFile] = useState("");
   const navigate = useNavigate();
@@ -69,7 +69,7 @@ function Register() {
 
       // Submit logic here...
       await toast.promise(
-        axios.post("/register",{
+        axios.post("http://localhost:5000/api/patients/register",{
           ...formDetails,
           // profilePic: file,
         }),

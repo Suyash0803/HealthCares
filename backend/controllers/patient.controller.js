@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Patient from '../models/patient.model.js';
+import Doctor from '../models/doctor.model.js';
 import Report from '../models/report.model.js';
 import Appointment from '../models/appointment.model.js';
 import {ApiError} from '../utils/apiError.js';
@@ -42,33 +43,48 @@ const getPatientProfile = asyncHandler(async (req, res) => {
     
 });
 
-const  getPatientAppointments = asyncHandler(async (req, res) => {
-    const {patientId} = req.params;
-    console.log("Fetching appointments for patient ID:", patientId);
-    try {
-        
-        const pateint = await Patient.findById(patientId);
-        if (!pateint) {
-            throw new ApiError(404, "Patient not found");
-        }
-        const appointments=pateint.appointments;
-        if(!appointments){
-            throw new ApiError(404, "No appointments found for this patient");
-        }
-        if ( appointments.length === 0) {
-            return res.status(300).json(new ApiError(300, {}, "No appointments found for this patient"));
-        }
-        const appointmentsDetails = await Appointment.find({ _id: { $in: appointments } })
-            .populate('doctor', 'name email')
-            .populate('patient', 'name email')
-            .populate('appointmentDate', 'date time')
-            .populate('status');
-        
-        return res.status(200).json(new ApiResponse(200, appointments, "Appointments retrieved successfully"));
-    } catch (error) {
-        return res.status(400).json(new ApiError(500, "Error retrieving appointments: " + error.message));
+const getPatientAppointments = asyncHandler(async (req, res) => {
+  const { patientId } = req.params;
+  console.log("Fetching appointments for patient ID:", patientId);
+
+  try {
+    const patient = await Patient.findById(patientId);
+    console.log("Patient found:", patient);
+
+    if (!patient) {
+      return res.status(404).json(new ApiError(404, "Patient not found"));
     }
+
+    // const appointmentIds = patient.appointments || [];
+
+    // if (appointmentIds.length === 0) {
+    //   return res
+    //     .status(200)
+    //     .json(new ApiResponse(200, [], "No appointments found"));
+    // }
+     const appointmentsDetails = await Appointment.find({ patientId }) // 🔥 Querying directly
+      .populate("doctorId", "name email")
+      .populate("patientId", "name email"); 
+
+    // const appointmentsDetails = await Appointment.find({ _id: { $in: appointmentIds } })
+    //   .populate("doctorId", "firstname lastname email")
+    //   .populate("userId", "firstname lastname email");
+    
+    if (appointmentsDetails.length === 0) {
+      return res.status(200).json(new ApiResponse(200, [], "No appointments found"));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, appointmentsDetails, "Appointments retrieved successfully"));
+  } catch (error) {
+    console.error("Appointment fetch error:", error.message);
+    return res
+      .status(500)
+      .json(new ApiError(500, "Error retrieving appointments: " + error.message));
+  }
 });
+
 
 const getPatientReports = asyncHandler(async (req, res) => {
     console.log("Fetching reports for patient ID:", req.params);
@@ -218,7 +234,7 @@ const loginPatient = asyncHandler(async (req, res) => {
           console.log("Generated accessToken and refreshToken for patient:", accessToken, refreshToken);
         const options = {
             // HttpOnly: Indicates if the cookie is accessible only through the HTTP protocol and not through client-side scripts.
-            // httpOnly: true,
+            
             // Secure: Indicates if the cookie should only be transmitted over secure HTTPS connections.
             secure: false, // TODO: Change to true in production
             maxAge: 24 * 60 * 60 * 1000, //cookie will expire after 1 day
@@ -226,7 +242,7 @@ const loginPatient = asyncHandler(async (req, res) => {
         // const loggedInPatient = patient.toObject();
         // delete loggedInPatient.password; // Remove password from response
         // delete loggedInPatient.refreshToken; // Remove refreshToken from response
-            
+        
         return res
             .status(200)
             .cookie("accessToken", accessToken, options) // Set cookie in client browser
@@ -252,25 +268,52 @@ const askAppointment = asyncHandler(async (req, res) => {
     const {  doctorId, appointmentDate, patientMobile } = req.body;
     try {
         console.log("Request body:", req.body);
-        if (!patientId || !doctorId || !appointmentDate || !patientMobile) {
-            throw new ApiError(400, "All fields are required");
-        }
-        if (!mongoose.Types.ObjectId.isValid(patientId) || !mongoose.Types.ObjectId.isValid(doctorId)) {
-            throw new ApiError(400, "Invalid patient or doctor ID");
-        }
-        const appointment = await Appointment.create({
-            patientId: patientId,
-            doctorId: doctorId,
-            appointmentDate: new Date(appointmentDate),
-            patientMobile: patientMobile,
-            status: 'Pending'
-        });
-        const doctor = await Patient.findById(doctorId);
+        // if (!patientId || !doctorId || !appointmentDate || !patientMobile) {
+        //     throw new ApiError(400, "All fields are required");
+        // }
+        // if (!mongoose.Types.ObjectId.isValid(patientId) || !mongoose.Types.ObjectId.isValid(doctorId)) {
+        //     throw new ApiError(400, "Invalid patient or doctor ID");
+        // }
+        console.log("Creating appointment for patient ID:", patientId, "and doctor ID:", doctorId, "on date:", appointmentDate,patientMobile);
+        // Ensure doctorId refers to a Doctor, not a Patient
+        // const appointment = await Appointment.create({
+        //     patientId: patientId,
+        //     doctorId: doctorId, // doctorId should be a valid Doctor _id
+        //     appointmentDate: new Date(appointmentDate),
+        //     patientMobile: patientMobile,
+        //     status: 'Pending'
+        // });
+        // console.log("Appointment created:", appointment);
+        
+
+        let appointment;
+try {
+  appointment = await Appointment.create({
+     patientId,
+     doctorId,
+    appointmentDate: new Date(appointmentDate),
+    pateintMobile: patientMobile, 
+    status: 'pending'
+  });
+  console.log("Step 2: Appointment created:", appointment);
+} catch (err) {
+  console.error("Error during Appointment.create:", err);
+  throw new ApiError(500, "Failed to create appointment");
+}
+
+        const doctor = await Doctor.findById(doctorId);
+        console.log("Doctor ID:", doctor);
         if (!doctor) {
             throw new ApiError(404, "Doctor not found");
         }
+        console.log("Doctor found:", doctor);
         doctor.appointments.push(appointment._id);
         await doctor.save();
+        const patient = await Patient.findById(patientId);
+        
+        patient.appointments.push(appointment._id);
+        await patient.save();
+        console.log("Patient ID:", patient);
         console.log("Appointment created:", appointment);
         return res.status(201).json(new ApiResponse(201, appointment, "Appointment requested successfully"));
     } catch (error) {
