@@ -15,6 +15,23 @@
   padding: 0;
   box-sizing: border-box;
 }
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background-color: var(--light-blue);
+}
+
+section.notif-section {
+  width: 100%;
+  max-width: 1200px;
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
 
 html {
   scroll-behavior: smooth;
@@ -23,6 +40,11 @@ html {
 body {
   font-family: var(--font-family);
   background-color: var(--light-blue);
+   margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 
@@ -59,7 +81,19 @@ p {
   justify-content: center;
   align-items: center;
 }
+/* Add this to your existing App.css */
+.full-width-container {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+}
 
+.appointments-page {
+  background-color: var(--light-blue);
+  min-height: 100vh;
+  width: 100%;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -106,6 +140,20 @@ p {
   height: 90vh;
   display: flex !important;
   margin: auto;
+}
+/* Wrap for table scroll */
+.table-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Table should never shrink */
+.table-scroll-container table {
+  min-width: 900px;
+  width: max-content;
+  border-collapse: collapse;
+  white-space: nowrap;
 }
 
 .nothing {

@@ -6,7 +6,9 @@ import patientRouter from './routes/patientRoutes.js';
 import doctorRouter from './routes/doctorRoutes.js';
 import contactRouter from './routes/contact.js';
 import cookieParser from 'cookie-parser';
+import chatRouter from './routes/chat.js';
 import dotenv from 'dotenv';
+import imageUploadRoutes from './routes/upload.js';
 dotenv.config({path: './.env'});
 const app= express();
 app.use(cors({
@@ -32,6 +34,8 @@ app.get('/', (req, res) => {
 app.use('/api/patients', patientRouter);
 app.use('/api/doctors', doctorRouter);
 app.use('/api',contactRouter);
+app.use('/api/chat', chatRouter);
+app.use('/api/upload', imageUploadRoutes);
 // Start the server
 app.listen(5000, () => {
     console.log("Server is running on port 5000");

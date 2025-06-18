@@ -135,11 +135,11 @@ const getPatientReportById = asyncHandler(async (req, res) => {
 
 const registerPatient = asyncHandler(async (req, res) => {
     try {
-        const { name, email, password, walletAddress, age, gender, address, phone, bloodgroup } = req.body;
+        const { name, email, password, walletAddress, age, gender, address, phone, bloodgroup,image } = req.body;
         
         console.log("Registration request received:", { 
             name, email, walletAddress, 
-            age, gender, address, phone, bloodgroup 
+            age, gender, address, phone, bloodgroup ,image
         });
 
         // Basic validation
@@ -173,7 +173,7 @@ const registerPatient = asyncHandler(async (req, res) => {
             gender,
             address,
             phone,
-            bloodgroup
+            bloodgroup,image
         });
 
         // Remove sensitive data before sending response

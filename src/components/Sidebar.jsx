@@ -26,13 +26,25 @@ const Sidebar=()=>{
         navigate("/login");
     }
     const activeStyle = {
-        color: "#fff",
-        backgroundColor: "#007bff",
-    };
-    const inactiveStyle = {
-        color: "#000",
-        backgroundColor: "#f8f9fa",
-    };
+  color: "#ffffff",
+  background: "linear-gradient(135deg, #007bff, #0056b3)",
+  borderRadius: "8px",
+  boxShadow: "0 4px 12px rgba(0, 123, 255, 0.3)",
+  padding: "10px 15px",
+  fontWeight: "bold",
+  transition: "all 0.3s ease",
+  textDecoration: "none",
+};
+
+const inactiveStyle = {
+  color: "#333",
+  backgroundColor: "#f1f1f1",
+  borderRadius: "8px",
+  padding: "10px 15px",
+  transition: "all 0.3s ease",
+  textDecoration: "none",
+};
+
     const sidebar=[
         {
             name:"Home",

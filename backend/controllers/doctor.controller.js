@@ -33,7 +33,7 @@ export const registerDoctor = asyncHandler(async (req, res) => {
     const {
   name, email, specialization, experience,
   phone, qualification, address, fees,
-  gender, hospitalName,walletAddress, password
+  gender, hospitalName,walletAddress, password,image
 } = req.body;
 
     if (!name || !email || !specialization || !experience || !phone || !qualification || !address || !fees || !gender || !hospitalName|| !walletAddress || !password) {
@@ -60,7 +60,7 @@ export const registerDoctor = asyncHandler(async (req, res) => {
   address,
   fees,
   gender,
-  hospitalName
+  hospitalName,image
 }]);
 
     if (!doctor) {
