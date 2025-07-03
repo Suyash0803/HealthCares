@@ -1,0 +1,67 @@
+/* doctorcard.css */
+.card {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex: 1 1 300px;
+  max-width: 350px;
+  min-width: 280px;
+  transition: transform 0.2s ease;
+  height: auto;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card-img {
+  margin: 0 auto 1rem auto;
+}
+
+.card-img img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.card-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  width: 100%;
+}
+
+.card p {
+  font-size: 0.95rem;
+  margin: 0.2rem 0;
+  width: 100%;
+}
+
+.appointment-btn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  background-color: #00a8e8;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.appointment-btn:hover {
+  background-color: #007bb5;
+}
+
+.doctor-card-link {
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}

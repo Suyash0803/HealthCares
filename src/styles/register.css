@@ -1,0 +1,162 @@
+:root {
+  --primary-color: #00aaff;
+  --bg-color: #e7f1fb;
+  --white: #ffffff;
+  --text-color: #333;
+  --input-bg: #f0f0f0;
+  --input-border: #ccc;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg-color);
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-section {
+  min-height: 100vh;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-wrapper {
+  display: flex;
+  width: 100%;
+  max-width: 1100px;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 90vh;
+}
+
+.register-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--white);
+  padding: 1rem;
+}
+
+.register-image img {
+  width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.register-container {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.form-heading {
+  color: var(--primary-color);
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  padding-right: 10px;
+  max-height: 70vh; /* Ensure scrolling if too many fields */
+}
+
+.form-input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+}
+
+.form-btn {
+  padding: 0.9rem;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.form-btn:hover {
+  background-color: #0077cc;
+}
+
+.login-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+/* Mobile responsive */
+@media (max-width: 900px) {
+  .register-wrapper {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .register-image {
+    width: 100%;
+    padding: 0;
+  }
+
+  .register-container {
+    max-height: none;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .register-form {
+    max-height: none;
+    padding-right: 0;
+  }
+}
+/* Custom Scrollbar Styling */
+.register-container::-webkit-scrollbar,
+.register-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.register-container::-webkit-scrollbar-track,
+.register-form::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Light grey background */
+  border-radius: 10px;
+}
+
+.register-container::-webkit-scrollbar-thumb,
+.register-form::-webkit-scrollbar-thumb {
+  background-color: #b0b0b0; /* Medium grey scrollbar */
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* Optional: hover effect */
+.register-container::-webkit-scrollbar-thumb:hover,
+.register-form::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
+}
