@@ -1,0 +1,212 @@
+/* Base Layout */
+.app {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.icon-box {
+  background-color: #2563eb;
+  padding: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  color: black;
+  width: 32px;
+  height: 32px;
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+}
+
+.success-icon {
+  color: green;
+  width: 20px;
+  height: 20px;
+}
+
+.error-icon {
+  color: red;
+  width: 20px;
+  height: 20px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #4b5563;
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto 24px;
+  padding: 0 1rem;
+}
+
+/* Section Header */
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 24px;
+}
+
+.section-header h2 {
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:hover {
+  background-color: #1e40af;
+}
+
+/* Medicine Grid */
+.medicine-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  background-color: white;
+  padding: 2.5rem;
+  max-width: 420px;
+  margin: auto;
+  border-radius: 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  color: #d1d5db;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  color: #4b5563;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.empty-state p {
+  color: #6b7280;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.primary-button {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.primary-button:hover {
+  background-color: #1e40af;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .add-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .medicine-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .empty-state {
+    padding: 2rem;
+    margin: 1rem auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .status-icon {
+    margin-left: 0;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .empty-state h3 {
+    font-size: 1rem;
+  }
+
+  .primary-button, .add-button {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+}

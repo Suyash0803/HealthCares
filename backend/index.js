@@ -4,9 +4,10 @@ import bodyParser from "body-parser";
 import connectDB from './database/index.js';
 import patientRouter from './routes/patientRoutes.js';
 import doctorRouter from './routes/doctorRoutes.js';
+import medicineRouter from './routes/medicineRoutes.js';
 import contactRouter from './routes/contact.js';
 import cookieParser from 'cookie-parser';
-import chatRouter from './routes/chat.js';
+// import chatRouter from './routes/chat.js';
 import dotenv from 'dotenv';
 import imageUploadRoutes from './routes/upload.js';
 import forgotPassRouter from "./routes/forget-pass.js";
@@ -36,10 +37,11 @@ app.get('/', (req, res) => {
 app.use('/api/patients', patientRouter);
 app.use('/api/doctors', doctorRouter);
 app.use('/api',contactRouter);
-app.use('/api/chat', chatRouter);
+// app.use('/api/chat', chatRouter);
 app.use('/api/upload', imageUploadRoutes);
 app.use('/api/auth', forgotPassRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/medicines', medicineRouter);
 
 // Start the server
 app.listen(5000, () => {

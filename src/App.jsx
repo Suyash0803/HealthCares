@@ -11,6 +11,7 @@ import Doctors from './components/Doctors-apply'
 import DoctorCard from './components/DoctorCard'
 import ViewDoctor from './pages/Doctors'
 import Error from './pages/Error'
+import Medicine from './pages/Medicine'
 import DoctorProfile from './pages/Doctors-info'
 import BookingAppointment from './components/BookAppointment'
 import Appointment from './pages/Appointment'
@@ -78,6 +79,7 @@ function App() {
           <Route path="/loginD" element={<LoginDoctor />} />
           <Route path="/registerD" element={< Doctors/>} />
           <Route path="/notifications" element={<NotificationPatient />} />
+          <Route path="/medicines" element={<Medicine/>}/>
         </Routes>
         
       </Suspense>
