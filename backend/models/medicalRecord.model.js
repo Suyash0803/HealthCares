@@ -12,15 +12,25 @@ const medicalRecordSchema = new Schema({
         enum: ['prescription', 'report', 'bill'],
         required: true
     },
-    ipfsHash: {
-        type: String,
-        required: true
-    },
     name: {
         type: String,
         required: true
     },
     description: {
+        type: String
+    },
+    ipfsHash: {
+        type: String,
+        required: true
+    },
+    dataHash: { // sha256 hash of the raw file for integrity
+        type: String,
+        required: true
+    },
+    recordId_onchain: { // for future on-chain integration
+        type: Number
+    },
+    patientContractAddress: { // for future on-chain integration
         type: String
     },
     uploadedAt: {

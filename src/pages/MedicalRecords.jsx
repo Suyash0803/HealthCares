@@ -5,6 +5,7 @@ import fetchData from '../helper/authApi';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/medicalrecords.css';
+import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = 'http://localhost:5000';
 
@@ -17,6 +18,7 @@ const MedicalRecords = () => {
     const [loading, setLoading] = useState(false);
     
     const { userInfo } = useSelector(state => state.root);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchRecords();
@@ -66,17 +68,8 @@ const MedicalRecords = () => {
         }
     };
 
-    const viewRecord = async (ipfsHash) => {
-        try {
-            const response = await fetchData(`${BACKEND_URL}/api/medical-records/view/${ipfsHash}`);
-            if (response.data.url) {
-                window.open(response.data.url, '_blank');
-            } else {
-                toast.error('Error getting record URL');
-            }
-        } catch (error) {
-            toast.error('Error viewing record');
-        }
+    const viewRecord = (recordId) => {
+        navigate(`/record/${recordId}`);
     };
 
     return (
@@ -148,7 +141,7 @@ const MedicalRecords = () => {
                                     <h4>{record.name}</h4>
                                     <p>{record.recordType}</p>
                                     <p>{record.description}</p>
-                                    <button onClick={() => viewRecord(record.ipfsHash)}>
+                                    <button onClick={() => viewRecord(record._id)}>
                                         View Record
                                     </button>
                                 </div>
