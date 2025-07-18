@@ -6,17 +6,23 @@ import Loading from "../components/Loading";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../redux/reducers/rootSlice";
 import toast from "react-hot-toast";
+import axios from "axios";
 import "../styles/appoint.css";
 import Error from "../pages/Error";
+import ConfirmAppointment from "../components/ConfirmAppointment"; // ✅ import new component
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
 
   const patient = JSON.parse(localStorage.getItem("patient"));
   const patientId = patient?._id;
 
+  // Fetch all appointments
   const retriveAllAppointments = async () => {
     try {
       dispatch(setLoading(true));
@@ -40,6 +46,62 @@ const Appointment = () => {
   useEffect(() => {
     retriveAllAppointments();
   }, []);
+
+  // Modal open handler
+  const openConfirmModal = (appointmentId) => {
+    setSelectedAppointmentId(appointmentId);
+    setShowConfirmModal(true);
+  };
+
+  // Modal close handler
+  const closeConfirmModal = () => {
+    setShowConfirmModal(false);
+    setSelectedAppointmentId(null);
+  };
+
+  // Confirm appointment API call
+  const confirmAppointmentAPI = async (date, time) => {
+    if (!selectedAppointmentId) return;
+
+    const appointmentDate = new Date(`${date}T${time}`);
+
+    try {
+      await toast.promise(
+        axios.put(
+          `http://localhost:5000/api/appointments/${selectedAppointmentId}/confirm`,
+          {
+            appointmentDate,
+            appointmentTime: time,
+          },
+          { withCredentials: true }
+        ),
+        {
+          loading: "Confirming appointment...",
+          success: "Appointment confirmed!",
+          error: "Failed to confirm appointment",
+        }
+      );
+
+      // Update local state so UI refreshes without reloading
+      setAppointments((prev) =>
+        prev.map((appt) =>
+          appt._id === selectedAppointmentId
+            ? {
+                ...appt,
+                appointmentDate,
+                appointmentTime: time,
+                status: "confirmed",
+              }
+            : appt
+        )
+      );
+
+      closeConfirmModal();
+    } catch (error) {
+      console.error(error);
+      toast.error("Error confirming appointment");
+    }
+  };
 
   return (
     <>
@@ -65,6 +127,7 @@ const Appointment = () => {
                         <th>Confirmed Time</th>
                         <th>Booking Date</th>
                         <th>Booking Time</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -75,25 +138,40 @@ const Appointment = () => {
                           <td>{ele?.status}</td>
                           <td>
                             {ele?.appointmentDate
-                              ? new Date(ele.appointmentDate).toLocaleDateString("en-IN", {
-                                  timeZone: "Asia/Kolkata",
-                                })
+                              ? new Date(ele.appointmentDate).toLocaleDateString(
+                                  "en-IN",
+                                  { timeZone: "Asia/Kolkata" }
+                                )
                               : "Not Confirmed"}
                           </td>
                           <td>{ele?.appointmentTime || "Not Confirmed"}</td>
                           <td>
-                            {new Date(ele?.createdAt).toLocaleDateString("en-IN", {
-                              timeZone: "Asia/Kolkata",
-                            })}
+                            {new Date(ele?.createdAt).toLocaleDateString(
+                              "en-IN",
+                              { timeZone: "Asia/Kolkata" }
+                            )}
                           </td>
                           <td>
-                            {new Date(ele?.createdAt).toLocaleTimeString("en-IN", {
-                              timeZone: "Asia/Kolkata",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                              hour12: true,
-                            })}
+                            {new Date(ele?.createdAt).toLocaleTimeString(
+                              "en-IN",
+                              {
+                                timeZone: "Asia/Kolkata",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              }
+                            )}
+                          </td>
+                          <td>
+                            {ele?.status !== "confirmed" && (
+                              <button
+                                className="btn blue-btn"
+                                onClick={() => openConfirmModal(ele._id)}
+                              >
+                                ✅ Confirm
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -109,6 +187,14 @@ const Appointment = () => {
       )}
 
       <Footer />
+
+      {/* ✅ Show ConfirmAppointment modal */}
+      {showConfirmModal && (
+        <ConfirmAppointment
+          onClose={closeConfirmModal}
+          onConfirm={confirmAppointmentAPI}
+        />
+      )}
     </>
   );
 };
