@@ -321,13 +321,16 @@ try {
             
         });
         
-        doctor.notifications.push({_id:notification._id, message: notification.message});
+        // doctor.notifications.push({_id:notification._id, message: notification.message});
+        doctor.notifications.push(notification._id);
         await notification.save();
 
         await doctor.save();
         await patient.save();
         console.log("Patient ID:", patient);
         console.log("Appointment created:", appointment);
+        console.log("Notification created:", notification);
+        console.log("Doctor's notifications updated:", doctor.notifications);
         return res.status(201).json(new ApiResponse(201, appointment, "Appointment requested successfully"));
     } catch (error) {
         return res.status(500).json(new ApiError(500, "Error requesting appointment: " + error.message));
@@ -386,7 +389,7 @@ const deleteAppointment = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Patient ID is required");
     }
 
-    const notifications = await Notification.find({ patientId }).sort({
+    const notifications = await Notification.find({ userId: patientId }).sort({
       updatedAt: -1,
     });
 
@@ -402,8 +405,39 @@ const deleteAppointment = asyncHandler(async (req, res) => {
     );
   }
 };
+const updatePatientProfile = asyncHandler(async (req, res) => {
+  const { patientId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(patientId)) {
+    throw new ApiError(400, "Invalid patient ID");
+  }
+
+  const patient = await Patient.findById(patientId);
+  if (!patient) {
+    throw new ApiError(404, "Patient not found");
+  }
+
+  const { name, email, phone, gender, address, age, password, image } = req.body;
+
+  patient.name = name || patient.name;
+  patient.email = email || patient.email;
+  patient.phone = phone || patient.phone;
+  patient.gender = gender || patient.gender;
+  patient.address = address || patient.address;
+  patient.age = age || patient.age;
+  patient.image = image || patient.image;
+
+  if (password) {
+    patient.password = password;
+  }
+
+  await patient.save();
+  res.status(200).json(new ApiResponse(200, patient, "Patient profile updated successfully"));
+});
+
 
 export {
+    updatePatientProfile,
     registerPatient,
     loginPatient,
     getPatientProfile,

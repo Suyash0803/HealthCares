@@ -59,7 +59,7 @@ const BookingAppointment = ({ ele, onClose }) => {
       <div className="modal__content">
         <h2 className="page-heading">Book Appointment</h2>
         <IoMdClose onClick={onClose} className="close-btn" />
-        <div className="register-container flex-center book">
+        <div className="register-container book">
           <form className="register-form" onSubmit={book}>
             <input
               type="date"

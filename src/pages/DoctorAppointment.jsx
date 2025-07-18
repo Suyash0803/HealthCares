@@ -11,12 +11,15 @@ import Error from "../pages/Error";
 
 const DoctorAppointment = () => {
   const [appointments, setAppointments] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
+
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
-
   const doctor = JSON.parse(localStorage.getItem("doctor"));
   const doctorId = doctor?._id;
- 
 
   const retrieveAllAppointments = async () => {
     try {
@@ -24,72 +27,49 @@ const DoctorAppointment = () => {
         toast.error("Doctor ID not found");
         return;
       }
-      console.log("Retrieving appointments for doctor ID:", doctorId);
-
       dispatch(setLoading(true));
 
       const response = await fetchData(
         `http://localhost:5000/api/doctors/${doctorId}/appointments`
       );
 
-      console.log("Appointments fetched:", response);
-
-      // Adjust based on your backend's response structure
       const appointmentsData = response?.data?.data || response?.data || [];
-      console.log("Appointments data:", appointmentsData);
       setAppointments(appointmentsData);
-      dispatch(setLoading(false));
     } catch (error) {
-      console.error("Error fetching appointments:", error);
       toast.error("Failed to fetch appointments");
+      console.error("Error fetching appointments:", error);
+    } finally {
       dispatch(setLoading(false));
     }
   };
-//   const updateStatus = async (appointmentId, newStatus) => {
-//   try {
-//     dispatch(setLoading(true));
 
-//     const response = await fetchData(
-//       `http://localhost:5000/api/doctors/${doctorId}/appointments/${appointmentId}`,
-//       "PUT", // or "PUT" depending on your backend
-//       { status: newStatus }
-//     );
-//     console.log("Update response:", response);
+  const updateStatus = async (
+    appointmentId,
+    newStatus,
+    appointmentDate = null,
+    appointmentTime = null
+  ) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await fetchData(
+        `http://localhost:5000/api/doctors/${doctorId}/appointments/${appointmentId}`,
+        "PUT",
+        {
+          status: newStatus,
+          appointmentDate,
+          appointmentTime,
+        }
+      );
 
-//     toast.success(`Appointment ${newStatus.toLowerCase()} successfully`);
-
-//     // Refresh appointments
-//     retrieveAllAppointments();
-//   } catch (error) {
-//     toast.error("Failed to update appointment status");
-//     console.error("Update error:", error);
-//   } finally {
-//     dispatch(setLoading(false));
-//   }
-// };
-
-const updateStatus = async (appointmentId, newStatus) => {
-  try {
-    console.log("Sending update request:", appointmentId, newStatus);
-
-    dispatch(setLoading(true));
-
-    const response = await fetchData(
-      `http://localhost:5000/api/doctors/${doctorId}/appointments/${appointmentId}`,
-      "PUT",
-      { status: newStatus }
-    );
-
-    console.log("✅ Update response:", response);
-    toast.success(`Appointment ${newStatus.toLowerCase()} successfully`);
-    retrieveAllAppointments();
-  } catch (error) {
-    console.error("❌ Update failed:", error.message);
-    toast.error("Failed to update appointment status");
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
+      toast.success(`Appointment ${newStatus.toLowerCase()} successfully`);
+      retrieveAllAppointments();
+    } catch (error) {
+      console.error("❌ Update failed:", error.message);
+      toast.error("Failed to update appointment status");
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   useEffect(() => {
     retrieveAllAppointments();
@@ -119,14 +99,10 @@ const updateStatus = async (appointmentId, newStatus) => {
                         <th>Booking Date</th>
                         <th>Booking Time</th>
                         <th>Status</th>
-                        {
-                            
-                        appointments.length > 0 &&
+                        {appointments.length > 0 &&
                           doctorId === appointments[0]?.doctorId?._id && (
                             <th>Action</th>
-                          )
-                          
-                          }
+                          )}
                       </tr>
                     </thead>
                     <tbody>
@@ -135,8 +111,16 @@ const updateStatus = async (appointmentId, newStatus) => {
                           <td>{i + 1}</td>
                           <td>{ele?.doctorId?.name || "N/A"}</td>
                           <td>{ele?.patientId?.name || "N/A"}</td>
-                          <td>{ele?.date}</td>
-                          <td>{ele?.time}</td>
+                          <td>
+                            {ele?.appointmentDate
+                              ? new Date(ele?.appointmentDate).toLocaleDateString()
+                              : "N/A"}
+                          </td>
+                          <td>
+                            {ele?.appointmentTime
+                              ? ele?.appointmentTime
+                              : "N/A"}
+                          </td>
                           <td>
                             {new Date(ele?.createdAt).toLocaleDateString(
                               "en-IN",
@@ -158,26 +142,31 @@ const updateStatus = async (appointmentId, newStatus) => {
                           <td>{ele?.status}</td>
                           {doctorId === ele?.doctorId?._id && (
                             <td>
-  {ele.status !== "Completed" && ele.status !== "Cancelled" && (
-    <>
-      <button
-        className="btn user-btn accept-btn"
-        title="Confirm"
-        onClick={() => updateStatus(ele._id, "confirmed")}
-      >
-        ✅
-      </button>
-      <button
-        className="btn user-btn reject-btn"
-        title="Cancel"
-        onClick={() => updateStatus(ele._id, "cancelled")}
-      >
-        ❌
-      </button>
-    </>
-  )}
-</td>
-
+                              {ele.status !== "Completed" &&
+                                ele.status !== "Cancelled" && (
+                                  <>
+                                    <button
+                                      className="btn user-btn accept-btn"
+                                      title="Confirm"
+                                      onClick={() => {
+                                        setSelectedAppointmentId(ele._id);
+                                        setShowModal(true);
+                                      }}
+                                    >
+                                      ✅
+                                    </button>
+                                    <button
+                                      className="btn user-btn reject-btn"
+                                      title="Cancel"
+                                      onClick={() =>
+                                        updateStatus(ele._id, "cancelled")
+                                      }
+                                    >
+                                      ❌
+                                    </button>
+                                  </>
+                                )}
+                            </td>
                           )}
                         </tr>
                       ))}
@@ -192,6 +181,55 @@ const updateStatus = async (appointmentId, newStatus) => {
         </div>
       )}
       <Footer />
+
+      {/* Modal for setting date & time */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Set Appointment Date & Time</h3>
+            <label>Date:</label>
+            <input
+              type="date"
+              value={appointmentDate}
+              onChange={(e) => setAppointmentDate(e.target.value)}
+            />
+            <label>Time:</label>
+            <input
+              type="time"
+              value={appointmentTime}
+              onChange={(e) => setAppointmentTime(e.target.value)}
+            />
+            <div style={{ marginTop: "1rem" }}>
+              <button
+                onClick={() => {
+                  if (!appointmentDate || !appointmentTime) {
+                    toast.error("Please set both date and time");
+                    return;
+                  }
+                  updateStatus(
+                    selectedAppointmentId,
+                    "confirmed",
+                    appointmentDate,
+                    appointmentTime
+                  );
+                  setShowModal(false);
+                  setAppointmentDate("");
+                  setAppointmentTime("");
+                }}
+                className="btn user-btn accept-btn"
+              >
+                Confirm Appointment
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="btn user-btn reject-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

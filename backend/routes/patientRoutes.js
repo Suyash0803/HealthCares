@@ -8,6 +8,7 @@ import {
     getPatientAppointments,
     askAppointment,
     deleteAppointment,
+    updatePatientProfile    
 } from "../controllers/patient.controller.js";
 
 
@@ -17,7 +18,8 @@ const patientRouter = Router();
 
 patientRouter.route("/register").post(registerPatient);
 patientRouter.route("/login").post(loginPatient);
-patientRouter.route("/profile/:patientId").get(verifyPatientJWT, getPatientProfile);
+patientRouter.route("/profile/:patientId").get( getPatientProfile);
+patientRouter.route("/profile/:patientId").put( updatePatientProfile); // ✅ update profile
 patientRouter.route("/:patientId/reports/").get(verifyPatientJWT, getPatientReports);
 patientRouter.route("/:patientId/reports/:reportId").get(verifyPatientJWT, getPatientReportById);
 patientRouter.route("/:patientId/appointments").get( getPatientAppointments);

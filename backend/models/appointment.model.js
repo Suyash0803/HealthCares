@@ -18,6 +18,10 @@ const appointmentSchema = new Schema({
         type: Date,
         required: true
     },
+     appointmentTime: {
+    type: String, // or Date if you're storing full timestamp
+    required: false
+  },
     pateintMobile:{
         type: String,
         required: true

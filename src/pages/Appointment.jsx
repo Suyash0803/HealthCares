@@ -13,32 +13,32 @@ const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
-  const patient = JSON.parse(localStorage.getItem("patient"));
-  const userId = patient?._id;
 
-  const retriveAllApoint = async () => {
+  const patient = JSON.parse(localStorage.getItem("patient"));
+  const patientId = patient?._id;
+
+  const retriveAllAppointments = async () => {
     try {
       dispatch(setLoading(true));
-      const patientData = JSON.parse(localStorage.getItem("patient"));
-      const patientId = patientData?._id;
-      if (!patientId) {
-        throw new Error("Patient ID not found");
-      }
+
+      if (!patientId) throw new Error("Patient ID not found");
 
       const response = await fetchData(
         `http://localhost:5000/api/patients/${patientId}/appointments`
       );
-      setAppointments(response.data);
-      dispatch(setLoading(false));
+
+      const data = response?.data?.data || response?.data || [];
+      setAppointments(data);
     } catch (error) {
       console.error("Error fetching appointments:", error);
       toast.error("Failed to fetch appointments");
+    } finally {
       dispatch(setLoading(false));
     }
   };
 
   useEffect(() => {
-    retriveAllApoint();
+    retriveAllAppointments();
   }, []);
 
   return (
@@ -60,23 +60,27 @@ const Appointment = () => {
                       <tr>
                         <th>S.No</th>
                         <th>Doctor</th>
-                        <th>Patient</th>
-                        <th>Appointment Date</th>
-                        <th>Appointment Time</th>
+                        <th>Status</th>
+                        <th>Confirmed Date</th>
+                        <th>Confirmed Time</th>
                         <th>Booking Date</th>
                         <th>Booking Time</th>
-                        <th>Status</th>
-                        {userId === appointments[0]?.doctorId?._id && <th>Action</th>}
                       </tr>
                     </thead>
                     <tbody>
                       {appointments.map((ele, i) => (
                         <tr key={ele?._id}>
                           <td>{i + 1}</td>
-                          <td>{ele?.doctorId?.name}</td>
-                          <td>{ele?.patientId?.name}</td>
-                          <td>{ele?.date}</td>
-                          <td>{ele?.time}</td>
+                          <td>{ele?.doctorId?.name || "N/A"}</td>
+                          <td>{ele?.status}</td>
+                          <td>
+                            {ele?.appointmentDate
+                              ? new Date(ele.appointmentDate).toLocaleDateString("en-IN", {
+                                  timeZone: "Asia/Kolkata",
+                                })
+                              : "Not Confirmed"}
+                          </td>
+                          <td>{ele?.appointmentTime || "Not Confirmed"}</td>
                           <td>
                             {new Date(ele?.createdAt).toLocaleDateString("en-IN", {
                               timeZone: "Asia/Kolkata",
@@ -91,19 +95,6 @@ const Appointment = () => {
                               hour12: true,
                             })}
                           </td>
-                          <td>{ele?.status}</td>
-                          {userId === ele?.doctorId?._id && (
-                            <td>
-                              <button
-                                className={`btn user-btn accept-btn ${
-                                  ele?.status === "Completed" ? "disable-btn" : ""
-                                }`}
-                                disabled={ele?.status === "Completed"}
-                              >
-                                Complete
-                              </button>
-                            </td>
-                          )}
                         </tr>
                       ))}
                     </tbody>
@@ -116,6 +107,7 @@ const Appointment = () => {
           </section>
         </div>
       )}
+
       <Footer />
     </>
   );

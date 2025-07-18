@@ -23,6 +23,7 @@ import ForgotPassword from './pages/ForgotPass'
 import LoginDoctor from './pages/LoginDoctor'
 import DoctorAppointment from './pages/DoctorAppointment'
 import NotificationPatient from './pages/NotificationPatient'
+import Notifications from './pages/Notifications'
 function App() {
   return (
     <Router>
@@ -79,6 +80,7 @@ function App() {
           <Route path="/loginD" element={<LoginDoctor />} />
           <Route path="/registerD" element={< Doctors/>} />
           <Route path="/notifications" element={<NotificationPatient />} />
+          <Route path="/notificationsD" element={<Notifications/>} />
           <Route path="/medicines" element={<Medicine/>}/>
         </Routes>
         

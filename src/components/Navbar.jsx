@@ -54,7 +54,7 @@ const Navbar = () => {
                 </NavLink>
               </li>
               <li>
-                <NavLink to={tokenType === "patient" ? "/notifications" : "/notifications"}>
+                <NavLink to={tokenType === "patient" ? "/notifications" : "/notificationsD"}>
                   Notifications
                 </NavLink>
               </li>
