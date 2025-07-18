@@ -196,7 +196,7 @@ function Profile() {
                 rows="2"
               ></textarea>
 
-              <div className="form-same-row">
+              {/* <div className="form-same-row">
                 <input
                   type="password"
                   name="password"
@@ -213,7 +213,7 @@ function Profile() {
                   value={formDetails.confpassword}
                   onChange={inputChange}
                 />
-              </div>
+              </div> */}
 
               <button type="submit" className="btn form-btn">
                 Update Profile
@@ -222,7 +222,7 @@ function Profile() {
               <button
                 type="button"
                 className="btn form-btn"
-                onClick={() => navigate("/change-password")}
+                onClick={() => navigate("/forgot-password")}
               >
                 Change Password
               </button>
