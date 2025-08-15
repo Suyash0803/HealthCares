@@ -1,0 +1,70 @@
+# Updated docker-compose.yml with nginx reverse proxy
+version: "3.9"
+
+services:
+  # Nginx reverse proxy
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - healthcare-network
+    restart: unless-stopped
+
+  # React frontend
+  frontend:
+    build: .
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - healthcare-network
+    environment:
+      - VITE_API_URL=http://backend:3000
+    restart: unless-stopped
+
+  # Node.js backend
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - healthcare-network
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    restart: unless-stopped
+
+  # Optional: Add a database service if needed
+  # mongodb:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   networks:
+  #     - healthcare-network
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=admin
+  #     - MONGO_INITDB_ROOT_PASSWORD=password
+  #   restart: unless-stopped
+
+networks:
+  healthcare-network:
+    driver: bridge
+
+# volumes:
+#   mongodb_data:
