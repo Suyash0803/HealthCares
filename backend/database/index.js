@@ -4,7 +4,8 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://admin:password@mongodb:27017/hospitals", {
+    const mongoUrl = "mongodb://mongodb:27017/hospitals";
+    await mongoose.connect(mongoUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
