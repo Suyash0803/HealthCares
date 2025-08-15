@@ -34,21 +34,16 @@ services:
 
   # Node.js backend
   backend:
-    build:
-      context: ./backend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
+    build: ./backend
+    depends_on:
+      - mongodb
     networks:
       - healthcare-network
     environment:
-      - NODE_ENV=development
-      - PORT=3000
-    restart: unless-stopped
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/mydb?authSource=admin
+    ports:
+      - "5000:5000"
 
-  # Optional: Add a database service if needed
   mongodb:
     image: mongo:6.0
     ports:
@@ -64,7 +59,6 @@ services:
 
 networks:
   healthcare-network:
-    driver: bridge
 
 volumes:
   mongodb_data:
